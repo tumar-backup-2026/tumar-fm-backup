@@ -11,10 +11,20 @@ jobs:
     steps:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
       - name: Record stream
         run: |
           ffmpeg -i "https://radio.tumar.fm:8005/stream" -t 3600 -c copy record_$(date +%Y-%m-%d).mp3
-      - name: Upload recording
+
+      - name: Send to Telegram
+        run: |
+          FILE=$(ls *.mp3)
+          curl -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+               -F audio=@"$FILE" \
+               -F title="Tumar FM $(date +%Y-%m-%d)" \
+               "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendAudio"
+
+      - name: Upload recording (backup)
         uses: actions/upload-artifact@v4
         with:
           name: tumar-fm-${{ github.run_id }}
