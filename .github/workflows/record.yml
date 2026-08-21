@@ -1,0 +1,20 @@
+name: Record Tumar FM
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record stream
+        run: |
+          ffmpeg -i "https://radio.tumar.fm:8005/stream" -t 3600 -c copy record_$(date +%Y-%m-%d).mp3
+      - name: Upload recording
+        uses: actions/upload-artifact@v4
+        with:
+          name: tumar-fm-${{ github.run_id }}
+          path: "*.mp3"
+          retention-days: 90
