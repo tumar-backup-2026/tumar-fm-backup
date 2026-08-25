@@ -12,7 +12,7 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-           - name: Record stream
+      - name: Record stream
         timeout-minutes: 65
         run: |
           ffmpeg -i "https://radio.tumar.fm:8005/stream" -t 3600 -c copy record_$(date +%Y-%m-%d).mp3
